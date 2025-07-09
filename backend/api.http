@@ -1,0 +1,17 @@
+### Post Homepage
+POST http://localhost:3000
+
+### Get Homepage
+GET http://localhost:3000
+
+### Cadastra usuário
+POST http://localhost:3000/users HTTP/1.1
+content-Type: application/json
+
+{
+    "email" : "contato@rodrigo.inf.br",
+    "password" : "secret123"
+}
+
+### Listar Tarefas
+GET http://localhost:3000/tarefas
