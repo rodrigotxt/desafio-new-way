@@ -11,6 +11,7 @@ import {
 } from '@nestjs/swagger';
 
 import { LoginDto } from './dto/login.dto';
+import { UserDto } from './dto/user.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -42,5 +43,23 @@ export class AuthController {
 
   getProfile(@Request() req) {
     return req.user;
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @Get('logout')
+  logout(@Request() req) {
+    req.session.destroy((err) => {
+      if (err) {
+        console.log(err);
+      }
+    });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @Post('createUser')
+  createUser(@Request() req, @Body() userDto: UserDto) {
+    return this.authService.createUser(req.body);
   }
 }
