@@ -1,5 +1,6 @@
 // src/tarefas/tarefas.controller.ts
-import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, HttpStatus, UseGuards, Request } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { TarefasService } from './tarefas.service';
 import { CreateTarefaDto } from './dto/create-tarefa.dto';
 import { UpdateTarefaDto } from './dto/update-tarefa.dto';
@@ -14,8 +15,9 @@ import {
 
 import { Tarefa as Task } from './entities/tarefa.entity';
 
-@ApiTags('tarefas') 
+@ApiTags('tarefas')
 @ApiBearerAuth('JWT-auth')
+@UseGuards(AuthGuard('jwt'))
 @Controller('tarefas')
 export class TarefasController {
   constructor(private readonly tarefasService: TarefasService) {}
@@ -26,7 +28,8 @@ export class TarefasController {
   @ApiResponse({ status: HttpStatus.CREATED, description: 'Tarefa criada com sucesso.', type: Task })
   @ApiResponse({ status: HttpStatus.BAD_REQUEST, description: 'Dados da tarefa inválidos.' })
   @ApiResponse({ status: HttpStatus.UNAUTHORIZED, description: 'Não autorizado.' })
-  create(@Body() createTarefaDto: CreateTarefaDto) {
+  
+  create(@Body() createTarefaDto: CreateTarefaDto, @Request() req) {
     return this.tarefasService.create(createTarefaDto);
   }
 
