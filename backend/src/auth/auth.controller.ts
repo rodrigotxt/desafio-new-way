@@ -1,5 +1,5 @@
 // src/auth/auth.controller.ts
-import { Controller, Post, Request, UseGuards, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Request, UseGuards, Body, HttpCode, HttpStatus, Get } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
 import {
@@ -35,6 +35,11 @@ export class AuthController {
   async login(@Request() req, @Body() loginDto: LoginDto) {
     return this.authService.login(req.user);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @Get('profile')
+
   getProfile(@Request() req) {
     return req.user;
   }
