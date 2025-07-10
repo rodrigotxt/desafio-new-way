@@ -37,7 +37,7 @@ export class CreateTarefaDto {
     example: 1,
     type: Number,
   })
-  @IsNotEmpty({ message: 'O ID do usuário não pode estar vazio.' })
+  @IsOptional()
   @IsNumber({}, { message: 'O ID do usuário deve ser um número.' })
   userId: number;
 }

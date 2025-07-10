@@ -1,5 +1,5 @@
 // src/tarefas/tarefas.service.ts
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateTarefaDto } from './dto/create-tarefa.dto';
@@ -17,68 +17,85 @@ export class TarefasService {
   ) {}
 
   async create(createTarefaDto: CreateTarefaDto): Promise<Task> {
-    // Verificar se o userId existe
     const user = await this.usersRepository.findOne({ where: { userId: createTarefaDto.userId } });
     if (!user) {
       throw new NotFoundException(`Usuário com ID ${createTarefaDto.userId} não encontrado.`);
     }
 
-    // Criar uma nova instância da tarefa a partir do DTO
     const newTask = this.tasksRepository.create({
       ...createTarefaDto,
       user: user,
     });
-
-    // Salvar a nova tarefa no banco de dados
     return this.tasksRepository.save(newTask);
   }
 
+  async findAllByUserId(userId: number): Promise<Task[]> {
+    return this.tasksRepository.find({
+      where: { userId: userId },
+      relations: ['user'],
+    });
+  }
+
   async findAll(): Promise<Task[]> {
-    // Encontra todas as tarefas, e carrega o usuário relacionado
     return this.tasksRepository.find({ relations: ['user'] });
   }
 
-  async findOne(id: number): Promise<Task> {
-    // Encontra uma tarefa pelo ID, e carrega o usuário relacionado
+  async findOne(id: number, ownerId?: number): Promise<Task | null> {
+    const whereCondition: any = { taskId: id };
+    if (ownerId) {
+      whereCondition.userId = ownerId; // Se ownerId for fornecido, filtra por ele
+    }
+
     const task = await this.tasksRepository.findOne({
-      where: { taskId: id },
+      where: whereCondition,
       relations: ['user'],
     });
-    if (!task) {
-      throw new NotFoundException(`Tarefa com ID ${id} não encontrada.`);
+
+    // Se a tarefa não foi encontrada ou não pertence ao usuário
+    if (!task && ownerId) {
+        return null;
+    }
+    if (!task) { // Se não foi encontrado NADA (nem para admin)
+        throw new NotFoundException(`Tarefa com ID ${id} não encontrada.`);
     }
     return task;
   }
 
-  async update(id: number, updateTarefaDto: UpdateTarefaDto): Promise<Task> {
-    // Buscar a tarefa existente
+  async update(id: number, updateTarefaDto: UpdateTarefaDto, ownerId?: number): Promise<Task> {
     const task = await this.tasksRepository.findOne({ where: { taskId: id } });
     if (!task) {
       throw new NotFoundException(`Tarefa com ID ${id} não encontrada.`);
     }
 
-    // Se um novo userId for fornecido, verificar se o novo usuário existe
+    // Se um ownerId foi fornecido (ou seja, não é admin), verificar posse
+    if (ownerId && task.userId !== ownerId) {
+      throw new ForbiddenException(`Você não tem permissão para atualizar esta tarefa.`);
+    }
+
+    // Se um novo userId for fornecido no DTO e for diferente do atual
     if (updateTarefaDto.userId && updateTarefaDto.userId !== task.userId) {
       const newUser = await this.usersRepository.findOne({ where: { userId: updateTarefaDto.userId } });
       if (!newUser) {
         throw new NotFoundException(`Novo usuário com ID ${updateTarefaDto.userId} não encontrado.`);
       }
-      // Atualiza o objeto user relacionado
-      task.user = newUser;
+      task.user = newUser; // Atribui o novo usuário relacionado
     }
 
-    // Mesclar os dados do DTO com a tarefa existente
     this.tasksRepository.merge(task, updateTarefaDto);
-
-    // Salvar as alterações
     return this.tasksRepository.save(task);
   }
 
-  async remove(id: number): Promise<void> {
-    // Buscar a tarefa para garantir que ela existe antes de remover
-    const result = await this.tasksRepository.delete(id);
+  // remove agora pode receber um ownerId opcional para verificação de posse
+  async remove(id: number, ownerId?: number): Promise<void> {
+    const whereCondition: any = { taskId: id };
+    if (ownerId) {
+      whereCondition.userId = ownerId;
+    }
+
+    const result = await this.tasksRepository.delete(whereCondition);
     if (result.affected === 0) {
-      throw new NotFoundException(`Tarefa com ID ${id} não encontrada para remoção.`);
+      // Lança NotFound se não encontrou a tarefa ou se ela não pertencia ao usuário
+      throw new NotFoundException(`Tarefa com ID ${id} não encontrada ou você não tem permissão para removê-la.`);
     }
   }
 }
