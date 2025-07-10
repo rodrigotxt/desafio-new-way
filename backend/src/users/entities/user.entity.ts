@@ -1,5 +1,6 @@
 // src/users/entities/user.entity.ts
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Tarefa as Task } from '../../tarefas/entities/tarefa.entity';
 
 export enum UserLevel{
     admin = 'admin',
@@ -26,5 +27,8 @@ export class User {
   
   @Column({ nullable: true })
   email: string;
+
+  @OneToMany(() => Task, task => task.user)
+  tasks: Task[];
   
 }
