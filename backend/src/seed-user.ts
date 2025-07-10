@@ -15,7 +15,10 @@ async function seed() {
     const usersService = app.get(UsersService);
     const configService = app.get(ConfigService); // Pega o ConfigService
 
-    const defaultUsername = configService.get<string>('DEFAULT_ADMIN_USERNAME') || 'admin';
+    const defaultAdminUsername = configService.get<string>('DEFAULT_ADMIN_USERNAME') || 'admin';
+    const defaultAdminPassword = configService.get<string>('DEFAULT_ADMIN_PASSWORD') || 'a1b2c3d4';
+
+    const defaultUsername = configService.get<string>('DEFAULT_ADMIN_USERNAME') || 'user';
     const defaultPassword = configService.get<string>('DEFAULT_ADMIN_PASSWORD') || 'a1b2c3d4';
 
     console.log(`Verificando se o usuário padrão '${defaultUsername}' existe...`);
@@ -25,15 +28,24 @@ async function seed() {
       console.log(`Usuário '${defaultUsername}' não encontrado. Criando...`);
 
       const salt = await bcrypt.genSalt(10);
+      const hashedAdminPassword = await bcrypt.hash(defaultAdminPassword, salt);
       const hashedPassword = await bcrypt.hash(defaultPassword, salt);
 
+      const newUserAdmin: Partial<User> = {
+        username: defaultAdminUsername,
+        password: hashedAdminPassword,
+        level: UserLevel.admin,
+      };
       const newUser: Partial<User> = {
         username: defaultUsername,
         password: hashedPassword,
-        level: UserLevel.admin,
+        level: UserLevel.user,
       };
 
-      await usersService.create(newUser as any); // TypeORM create aceita Partial<User>
+      await usersService.create(newUserAdmin as any);
+      console.log(`Usuário padrão '${defaultAdminUsername}' criado com sucesso!`);
+      
+      await usersService.create(newUser as any);
       console.log(`Usuário padrão '${defaultUsername}' criado com sucesso!`);
     } else {
       console.log(`Usuário padrão '${defaultUsername}' já existe. Nenhuma ação necessária.`);
