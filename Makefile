@@ -11,7 +11,7 @@ FRONTEND_SERVICE = frontend
 setup-env:
 	@echo "Configurando arquivos .env..."
 	@if [ ! -f ./backend/.env ]; then cp ./backend/.env.example ./backend/.env; echo "Criado ./backend/.env"; fi
-	@if [ ! -f ./frontend/.env.local ]; then cp ./frontend/.env.local.example ./frontend/.env.local; echo "Criado ./frontend/.env.local"; fi
+	@if [ ! -f ./frontend/.env.local ]; then cp ./frontend/.env.example ./frontend/.env.local; echo "Criado ./frontend/.env.local"; fi
 	@echo "Verifique e ajuste os arquivos .env criados com suas configurações."
 
 # Constrói (ou reconstrói) as imagens Docker dos serviços
