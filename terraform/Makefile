@@ -1,4 +1,4 @@
-DB_PASSWORD ?=a1b2c3
+DB_PASSWORD ?=a1b2c3d4
 JWT_SECRET ?=tDW6bSlYfmBF8irvWkgxZF1q4x53f0pW
 
 # Flag para auto-approve no apply
