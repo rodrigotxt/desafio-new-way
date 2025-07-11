@@ -8,3 +8,4 @@ node_modules
 crash.log
 *.tfvars
 *.tfvars.json
+terraform/.terraform.tfstate.lock.info
