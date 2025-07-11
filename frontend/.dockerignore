@@ -1,0 +1,29 @@
+# Dependências do Node.js
+node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de ambiente local
+.env
+.env.*.local
+.env.local
+
+# Builds e outputs do Nuxt.js
+.nuxt/
+dist/
+.output/
+static/
+
+# Controle de versão
+.git
+.gitignore
+
+# Editores e IDEs
+.vscode/
+.idea/
+
+# Outros arquivos temporários ou de cache
+*.log
+*.tmp
+tmp/
