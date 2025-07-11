@@ -10,6 +10,21 @@ TERRAFORM_ARGS = $(if $(DB_PASSWORD),-var="db_password=$(DB_PASSWORD)") \
 
 .PHONY: init plan apply destroy clean
 
+# Faz build das imagens Docker e enviar para AWS ECR
+build:
+	@echo "📦 Gerando imagem backend no AWS ECR..."
+	aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 194722440064.dkr.ecr.us-east-1.amazonaws.com
+	docker build -t tasks-app-backend ../backend
+	docker tag tasks-app-backend:latest 194722440064.dkr.ecr.us-east-1.amazonaws.com/tasks-app-backend:latest
+	docker push 194722440064.dkr.ecr.us-east-1.amazonaws.com/tasks-app-backend:latest
+	aws ecr describe-images --repository-name tasks-app-backend --region us-east-1 --query "imageDetails[].[imageTags]" --output table
+	@echo "📦 Gerando frontend no AWS ECR..."
+	aws ecr get-login-password --region us-east-1 | docker login --username AWS --password-stdin 194722440064.dkr.ecr.us-east-1.amazonaws.com
+	docker build -t tasks-app-frontend ../frontend
+	docker tag tasks-app-frontend:latest 194722440064.dkr.ecr.us-east-1.amazonaws.com/tasks-app-frontend:latest
+	docker push 194722440064.dkr.ecr.us-east-1.amazonaws.com/tasks-app-frontend:latest
+	aws ecr describe-images --repository-name tasks-app-frontend --region us-east-1 --query "imageDetails[].[imageTags]" --output table
+
 # Inicializa o Terraform
 init:
 	@echo "🔥 Inicializando o Terraform..."
