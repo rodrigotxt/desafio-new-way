@@ -15,7 +15,7 @@ setup-env:
 	@echo "Verifique e ajuste os arquivos .env criados com suas configurações."
 
 # Constrói (ou reconstrói) as imagens Docker dos serviços
-build: setup-env # Adiciona 'setup-env' como dependência
+build: setup-env
 	@echo "Construindo as imagens Docker..."
 	docker-compose build
 
@@ -25,7 +25,7 @@ up: build
 	docker-compose up -d
 
 # Inicia os serviços que já foram criados mas estão parados
-start: setup-env # Adiciona 'setup-env' como dependência
+start: setup-env
 	@echo "Iniciando os serviços Docker..."
 	docker-compose start
 
@@ -35,7 +35,7 @@ stop:
 	docker-compose stop
 
 # Reinicia todos os serviços
-restart: setup-env # Adiciona 'setup-env' como dependência
+restart: setup-env
 	@echo "Reiniciando os serviços Docker..."
 	docker-compose restart
 
