@@ -40,6 +40,8 @@ services:
     build:
       context: ./frontend
     container_name: tasks-frontend
+    env_file:
+      - .env
     environment:
       NEXT_PUBLIC_API_BASE_URL: ${API_BASE_URL}
       NODE_ENV: development

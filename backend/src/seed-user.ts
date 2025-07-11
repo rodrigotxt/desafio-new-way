@@ -18,28 +18,25 @@ export async function seed() {
     const defaultAdminUsername = configService.get<string>('DEFAULT_ADMIN_USERNAME') || 'admin';
     const defaultAdminPassword = configService.get<string>('DEFAULT_ADMIN_PASSWORD') || 'a1b2c3d4';
 
-    const defaultUsername = configService.get<string>('DEFAULT_ADMIN_USERNAME') || 'user';
-    const defaultPassword = configService.get<string>('DEFAULT_ADMIN_PASSWORD') || 'a1b2c3d4';
+    const defaultUsername = configService.get<string>('DEFAULT_USERNAME') || 'user';
+    const defaultPassword = configService.get<string>('DEFAULT_PASSWORD') || 'a1b2c3d4';
 
     console.log(`Verificando se o usuário padrão existe...`);
     const existingUser = await usersService.findOne(defaultUsername);
     const existingUserAdmin = await usersService.findOne(defaultAdminUsername);
+    console.log(`Usuários encontrados: ${JSON.stringify({ existingUser, existingUserAdmin })}`);
 
     if (!existingUser && !existingUserAdmin) {
       console.log(`Usuário '${defaultUsername}' não encontrado. Criando...`);
 
-      const salt = await bcrypt.genSalt(10);
-      const hashedAdminPassword = await bcrypt.hash(defaultAdminPassword, salt);
-      const hashedPassword = await bcrypt.hash(defaultPassword, salt);
-
       const newUserAdmin: Partial<User> = {
         username: defaultAdminUsername,
-        password: hashedAdminPassword,
+        password: defaultAdminPassword,
         level: UserLevel.admin,
       };
       const newUser: Partial<User> = {
         username: defaultUsername,
-        password: hashedPassword,
+        password: defaultPassword,
         level: UserLevel.user,
       };
 
@@ -53,10 +50,6 @@ export async function seed() {
     }
   } catch (error) {
     console.error('Erro ao criar usuário padrão:', error);
-  } finally {
-    if (app) {
-      await app.close();
-    }
   }
 }
 if (require.main === module) {

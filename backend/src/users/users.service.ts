@@ -1,5 +1,4 @@
-// src/users/users.service.ts
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, InternalServerErrorException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './entities/user.entity';
@@ -14,25 +13,32 @@ export class UsersService {
   ) {}
 
   async findOne(username: string): Promise<User | null> {
-    return this.usersRepository.findOne({ where: { username: username } });
+    try {
+      return await this.usersRepository.findOne({ where: { username } });
+    } catch (error) {
+      throw new InternalServerErrorException('Falha ao buscar usuário.');
+    }
   }
+
   async findAll(): Promise<User[]> {
     return this.usersRepository.find();
   }
 
   async create(createUserDto: CreateUserDto): Promise<User> {
-    const existingUser = await this.findOne(createUserDto.username);
-    if (existingUser) {
-      throw new ConflictException('Nome de usuário já existe.');
-    }
-    const salt = await bcrypt.genSalt();
+    const salt = await bcrypt.genSalt(12);
     const hashedPassword = await bcrypt.hash(createUserDto.password, salt);
 
-    const newUser = this.usersRepository.create({
-      ...createUserDto,
-      password: hashedPassword,
-    } as User);
-
-    return this.usersRepository.save(newUser);
+    try {
+      const newUser = this.usersRepository.create({
+        ...createUserDto,
+        password: hashedPassword,
+      });
+      return await this.usersRepository.save(newUser);
+    } catch (error) {
+      if (error.code === '23505') {
+        throw new ConflictException('Nome de usuário já existe.');
+      }
+      throw new InternalServerErrorException('Falha ao criar usuário.');
+    }
   }
 }
