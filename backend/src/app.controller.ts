@@ -2,7 +2,7 @@ import { Controller, Get } from '@nestjs/common';
 import { ApiOperation } from '@nestjs/swagger';
 import { AppService } from './app.service';
 import { InternalServerErrorException } from '@nestjs/common';
-import { SeedService } from './seed.service';
+import { SeedService } from './seed/seed.service';
 
 @Controller()
 export class AppController {
