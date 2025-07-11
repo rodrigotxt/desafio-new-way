@@ -30,4 +30,7 @@ export class AuthService {
   async createUser(user: any) {
     return this.usersService.create(user);
   }
+  async getAllUsers() {
+    return this.usersService.findAll();
+  }
 }

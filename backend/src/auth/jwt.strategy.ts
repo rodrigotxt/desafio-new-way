@@ -1,24 +1,30 @@
-// jwt.strategy.ts
-import { Injectable } from '@nestjs/common';
-import { PassportStrategy } from '@nestjs/passport';
+// src/auth/jwt.strategy.ts
 import { ExtractJwt, Strategy } from 'passport-jwt';
+import { PassportStrategy } from '@nestjs/passport';
+import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { UsersService } from '../users/users.service'; // Importe UsersService
+import { User } from '../users/entities/user.entity'; // Importe User entity
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private configService: ConfigService) {
-    const jwtSecret = configService.get<string>('JWT_SECRET');
-    if (!jwtSecret) {
-      throw new Error('JWT Secret deve estar definido em jwtConstants.secret');
-    }
+  constructor(private configService: ConfigService, private usersService: UsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
-      secretOrKey: jwtSecret,
+      secretOrKey: configService.getOrThrow<string>('JWT_SECRET'),
     });
   }
 
   async validate(payload: any) {
-    return { userId: payload.sub, username: payload.username };
+    // Buscar o usuário no banco de dados para obter o nível mais recente
+    const user: User | null = await this.usersService.findOne(payload.username);
+
+    if (!user) {
+      // Se o usuário não for encontrado no DB, o token é inválido.
+      return null;
+    }
+
+    return { userId: user.userId, username: user.username, level: user.level };
   }
 }

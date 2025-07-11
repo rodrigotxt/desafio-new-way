@@ -51,4 +51,12 @@ export class AuthController {
   createUser(@Request() req, @Body() userDto: UserDto) {
     return this.authService.createUser(req.body);
   }
+
+  @UseGuards(AuthGuard('jwt'))
+  @ApiBearerAuth()
+  @Get('listUsers')
+  listUsers() {
+    return this.authService.getAllUsers();
+  }
+
 }
