@@ -1,13 +1,15 @@
+// src/app.controller.ts
 import { Controller, Get } from '@nestjs/common';
+import { ApiOperation } from '@nestjs/swagger';
 import { AppService } from './app.service';
+import { SeedService } from './seed/seed.service';
 import { InternalServerErrorException } from '@nestjs/common';
-import { SeedService } from './seed.service';
 
 @Controller()
 export class AppController {
   constructor(
     private readonly appService: AppService,
-    private readonly seedService: SeedService,
+    private readonly seedService: SeedService
   ) {}
 
   @Get()
@@ -16,6 +18,7 @@ export class AppController {
   }
 
   @Get('seed')  
+  @ApiOperation({ summary: 'Popular o banco com usuários padrão (admin e user).' })
   async runSeed(): Promise<any> {
     const env = process.env.NODE_ENV || 'development';
 

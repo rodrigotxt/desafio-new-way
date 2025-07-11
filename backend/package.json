@@ -17,7 +17,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
-    "seed:default-user": "ts-node -r tsconfig-paths/register src/seed-user.ts",
+    "seed:default-user": "ts-node -r tsconfig-paths/register src/seed/seed-user.ts",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {

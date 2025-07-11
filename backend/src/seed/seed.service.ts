@@ -4,7 +4,10 @@ import { seed } from './seed-user';
 
 @Injectable()
 export class SeedService {
-  public async runSeed() {
+  async runSeed() {
+    if (process.env.NODE_ENV === 'production') {
+      throw new Error('Não pode rodar em produção');
+    }
     await seed();
     return { message: 'Seed executado com sucesso' };
   }

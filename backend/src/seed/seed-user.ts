@@ -1,12 +1,12 @@
 // src/seed-user.ts
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
-import { UsersService } from './users/users.service';
-import { User } from './users/entities/user.entity';
+import { AppModule } from '../app.module';
+import { UsersService } from '../users/users.service';
+import { User } from '../users/entities/user.entity';
 import * as bcrypt from 'bcrypt';
 import { INestApplicationContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { UserLevel } from './users/entities/user.entity';
+import { UserLevel } from '../users/entities/user.entity';
 
 export async function seed() {
   let app: INestApplicationContext | null = null;
