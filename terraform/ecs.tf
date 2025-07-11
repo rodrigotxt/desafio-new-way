@@ -197,7 +197,7 @@ resource "aws_lb_listener" "http" {
     target_group_arn = aws_lb_target_group.frontend.arn # Roteia todo o tráfego para o frontend
   }
 }
-
+/*
 # Opcional: Listener para o backend se quiser expor a API diretamente
 resource "aws_lb_listener_rule" "backend_rule" {
   # Cuidado: Ajuste o path para não colidir com o frontend. Ex: /api/*
@@ -217,7 +217,7 @@ resource "aws_lb_listener_rule" "backend_rule" {
   #   }
   # }
 }
-
+*/
 
 # Definição da tarefa Backend
 resource "aws_ecs_task_definition" "backend" {

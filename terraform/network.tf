@@ -66,10 +66,8 @@ resource "aws_route_table_association" "public" {
 
 # NAT Gateway para subnets privadas (para acesso a internet de saída)
 resource "aws_eip" "nat" {
-  count = length(var.public_subnet_cidrs) # Um EIP por subnet pública para NAT
-  vpc   = true
+  count = length(var.public_subnet_cidrs)
 }
-
 resource "aws_nat_gateway" "main" {
   count         = length(var.public_subnet_cidrs)
   allocation_id = aws_eip.nat[count.index].id
