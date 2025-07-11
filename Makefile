@@ -5,20 +5,27 @@ DB_SERVICE = db
 BACKEND_SERVICE = backend
 FRONTEND_SERVICE = frontend
 
-.PHONY: up start stop restart down logs logs-backend logs-frontend clean build
+.PHONY: up start stop restart down logs logs-backend logs-frontend clean build setup-env
+
+# Comando para configurar os arquivos .env
+setup-env:
+	@echo "Configurando arquivos .env..."
+	@if [ ! -f ./backend/.env ]; then cp ./backend/.env.example ./backend/.env; echo "Criado ./backend/.env"; fi
+	@if [ ! -f ./frontend/.env.local ]; then cp ./frontend/.env.local.example ./frontend/.env.local; echo "Criado ./frontend/.env.local"; fi
+	@echo "Verifique e ajuste os arquivos .env criados com suas configurações."
 
 # Constrói (ou reconstrói) as imagens Docker dos serviços
-build:
+build: setup-env
 	@echo "Construindo as imagens Docker..."
 	docker-compose build
 
 # Inicia todos os serviços em segundo plano (detached mode) e constrói se as imagens não existirem
-up: build # Adiciona 'build' como dependência para garantir que as imagens existam
+up: build
 	@echo "Levantando os serviços Docker em segundo plano..."
 	docker-compose up -d
 
 # Inicia os serviços que já foram criados mas estão parados
-start:
+start: setup-env
 	@echo "Iniciando os serviços Docker..."
 	docker-compose start
 
@@ -28,7 +35,7 @@ stop:
 	docker-compose stop
 
 # Reinicia todos os serviços
-restart:
+restart: setup-env
 	@echo "Reiniciando os serviços Docker..."
 	docker-compose restart
 
@@ -41,7 +48,7 @@ down:
 # Derruba os serviços e remove os volumes de dados do PostgreSQL
 clean:
 	@echo "Derrubando os serviços Docker e removendo volumes de dados (CUIDADO: APAGA OS DADOS DO BANCO DE DADOS!)..."
-	docker-compose down -v --remove-orphans # Adicionado --remove-orphans para limpar contêineres não definidos no compose
+	docker-compose down -v --remove-orphans
 
 # Mostra os logs de um serviço específico (DB, backend, frontend)
 logs:
