@@ -1,6 +1,6 @@
 // src/types.ts
 export interface TaskData {
-  id?: number;
+  taskId?: number;
   nome: string;
   descricao: string;
   concluido: boolean;

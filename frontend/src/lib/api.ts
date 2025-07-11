@@ -39,7 +39,7 @@ async function fetcher<T>(url: string, options: ApiOptions = {}): Promise<T> {
 }
 
 // Funções de API com tipagem
-export const login = async (credentials: { email: string; senha: string }): Promise<{ access_token: string }> => {
+export const login = async (credentials: { username: string; password: string }): Promise<{ access_token: string }> => {
   return fetcher('/auth/login', {
     method: 'POST',
     body: JSON.stringify(credentials),

@@ -4,6 +4,7 @@ import { useRouter } from 'next/router';
 import { getTasks, createTask, updateTask, deleteTask } from '../lib/api';
 import { isAuthenticated } from '../lib/auth';
 import TaskForm from '../components/TaskForm';  
+import type { TaskData } from '../types';
 
 const TasksPage: React.FC = () => {
   const [tasks, setTasks] = useState<TaskData[]>([]);
@@ -97,7 +98,13 @@ const TasksPage: React.FC = () => {
 
       <TaskForm
         initialData={editingTask ?? undefined}
-        onSubmit={editingTask ? (data) => handleUpdateTask(editingTask.taskId, data) : handleCreateTask}
+        onSubmit={(data) => {
+                              if (editingTask?.taskId !== undefined) {
+                                handleUpdateTask(editingTask.taskId, data);
+                              } else {
+                                handleCreateTask(data);
+                              }
+                            }}
         onCancel={editingTask ? cancelEditing : undefined}
       />
 
@@ -120,7 +127,7 @@ const TasksPage: React.FC = () => {
                   <button onClick={() => startEditing(task)} style={{ padding: '8px 15px', backgroundColor: '#ffc107', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
                     Editar
                   </button>
-                  <button onClick={() => handleDeleteTask(task.taskId)} style={{ padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
+                  <button onClick={() => {if (typeof task.taskId === 'number') handleDeleteTask(task.taskId);}} style={{ padding: '8px 15px', backgroundColor: '#dc3545', color: 'white', border: 'none', borderRadius: '5px', cursor: 'pointer' }}>
                     Excluir
                   </button>
                 </div>

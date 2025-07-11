@@ -37,7 +37,7 @@ const LoginPage: React.FC = () => {
       <h2 style={{ textAlign: 'center', marginBottom: '20px', color: '#333' }}>Login</h2>
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '15px' }}>
-          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Nome de Usuário:</label>
+          <label style={{ display: 'block', marginBottom: '5px', fontWeight: 'bold' }}>Usuário:</label>
           <input
             type="text"
             value={username}
