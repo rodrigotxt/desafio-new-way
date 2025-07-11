@@ -1,2 +1,10 @@
 .history
 node_modules
+# Terraform files to ignore
+.terraform/
+.terraform.lock.hcl
+*.tfstate
+*.tfstate.backup
+crash.log
+*.tfvars
+*.tfvars.json
