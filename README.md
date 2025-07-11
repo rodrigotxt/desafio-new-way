@@ -2,6 +2,12 @@
 
 Este projeto é uma aplicação completa de gerenciamento de tarefas, desenvolvida com um backend robusto em **NestJS** (TypeScript) e um frontend interativo em **Next.js** (React/TypeScript). Ele oferece funcionalidades de autenticação JWT, CRUD de tarefas com controle de acesso baseado em nível de usuário, e é totalmente conteinerizado usando **Docker Compose** para facilitar o desenvolvimento e o deploy.
 
+**Direto ao ponto:**
+
+- Clone o repositório
+- Entre na pasta e faça `make up`
+- Mais detalhes podem ser vistos nas seção **Como Subir o Projeto**
+
 ## 🚀 Funcionalidades
 
 ### **Backend (NestJS)**
@@ -69,12 +75,12 @@ Este projeto utiliza **Docker Compose** para gerenciar todos os serviços (banco
    **Bash**
 
    ```
-   git clone [URL_DO_SEU_REPOSITORIO]
-   cd [pasta_do_projeto]
+   git clone https://github.com/rodrigotxt/desafio-new-way.git
+   cd desafio-new-way
    ```
 2. **Crie os Arquivos de Variáveis de Ambiente:**
 
-   * **Backend:** Crie um arquivo `.env` na pasta `backend/`.
+   * **Backend:** Crie um arquivo `.env`  ou renomei o `.env.example` na pasta `backend/`.
      **Snippet de código**
 
      ```
