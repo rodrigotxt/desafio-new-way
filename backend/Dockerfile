@@ -1,35 +1,24 @@
-# ./backend/Dockerfile
-# Etapa de build (desenvolvimento)
+# Estágio de construção
 FROM node:20-alpine AS builder
 
-# Diretório de trabalho
 WORKDIR /app
 
-# Copia arquivos de dependências
 COPY package*.json ./
+RUN npm install
 
-# Instala dependências (sem modificar lockfile)
-RUN npm ci --omit=dev
-
-# Copia o restante do código
 COPY . .
-
-# Compila o projeto (ex: NestJS → ./dist)
 RUN npm run build
 
-
-# Etapa de produção
+# Estágio de produção
 FROM node:20-alpine
 
 WORKDIR /app
 
-# Copia apenas o necessário da imagem anterior
+# Copia apenas o que é necessário do estágio de construção
 COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package*.json ./
 COPY --from=builder /app/dist ./dist
-COPY --from=builder /app/package.json ./package.json
 
-# Porta padrão (ex: NestJS)
 EXPOSE 3000
 
-# Comando de inicialização
-CMD ["node", "dist/main"]
+CMD ["node", "dist/main.js"] 

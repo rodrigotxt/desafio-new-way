@@ -8,7 +8,7 @@ import { INestApplicationContext } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { UserLevel } from './users/entities/user.entity';
 
-async function seed() {
+export async function seed() {
   let app: INestApplicationContext | null = null;
   try {
     app = await NestFactory.createApplicationContext(AppModule);
@@ -21,10 +21,11 @@ async function seed() {
     const defaultUsername = configService.get<string>('DEFAULT_ADMIN_USERNAME') || 'user';
     const defaultPassword = configService.get<string>('DEFAULT_ADMIN_PASSWORD') || 'a1b2c3d4';
 
-    console.log(`Verificando se o usuário padrão '${defaultUsername}' existe...`);
+    console.log(`Verificando se o usuário padrão existe...`);
     const existingUser = await usersService.findOne(defaultUsername);
+    const existingUserAdmin = await usersService.findOne(defaultAdminUsername);
 
-    if (!existingUser) {
+    if (!existingUser && !existingUserAdmin) {
       console.log(`Usuário '${defaultUsername}' não encontrado. Criando...`);
 
       const salt = await bcrypt.genSalt(10);
@@ -58,5 +59,6 @@ async function seed() {
     }
   }
 }
-
-seed();
+if (require.main === module) {
+  seed();
+}
