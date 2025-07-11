@@ -7,6 +7,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
 import { TarefasModule } from './tarefas/tarefas.module';
+import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
@@ -14,7 +15,7 @@ import { TarefasModule } from './tarefas/tarefas.module';
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
+      imports: [ConfigModule, SeedModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: configService.get<string>('DB_TYPE') as any || 'postgres',
