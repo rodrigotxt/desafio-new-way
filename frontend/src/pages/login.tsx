@@ -1,7 +1,7 @@
 // src/pages/login.tsx
 import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
-import { login, getTasks } from '../lib/api'; // Importe getTasks para testar após login
+import { login } from '../lib/api';
 import { setToken, isAuthenticated } from '../lib/auth';
 
 const LoginPage: React.FC = () => {
@@ -23,8 +23,12 @@ const LoginPage: React.FC = () => {
       const data = await login({ username, password });
       setToken(data.access_token);
       router.push('/tasks');
-    } catch (err: any) {
-      setError(err.message || 'Erro ao fazer login.');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Erro ao fazer login.');
+      }
     }
   };
 

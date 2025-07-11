@@ -3,13 +3,13 @@ import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { getTasks, createTask, updateTask, deleteTask } from '../lib/api';
 import { isAuthenticated } from '../lib/auth';
-import TaskForm from '../components/TaskForm';
+import TaskForm from '../components/TaskForm';  
 
 const TasksPage: React.FC = () => {
-  const [tasks, setTasks] = useState<any[]>([]);
+  const [tasks, setTasks] = useState<TaskData[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [editingTask, setEditingTask] = useState<any | null>(null);
+  const [editingTask, setEditingTask] = useState<TaskData | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -26,30 +26,42 @@ const TasksPage: React.FC = () => {
     try {
       const data = await getTasks();
       setTasks(data);
-    } catch (err: any) {
-      setError(err.message || 'Erro ao carregar tarefas.');
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Erro ao carregar tarefas.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  const handleCreateTask = async (taskData: any) => {
+  const handleCreateTask = async (taskData: Omit<TaskData, 'taskId'>) => {
     try {
       await createTask(taskData);
-      await fetchTasks(); // Recarrega a lista de tarefas
-      setEditingTask(null); // Limpa o formulário após a criação
-    } catch (err: any) {
-      setError(err.message || 'Erro ao adicionar tarefa.');
+      await fetchTasks();
+      setEditingTask(null);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Erro ao adicionar tarefa.');
+      }
     }
   };
 
-  const handleUpdateTask = async (id: number, taskData: any) => {
+  const handleUpdateTask = async (id: number, taskData: Omit<TaskData, 'taskId'>) => {
     try {
       await updateTask(id, taskData);
-      await fetchTasks(); // Recarrega a lista de tarefas
-      setEditingTask(null); // Sai do modo de edição
-    } catch (err: any) {
-      setError(err.message || 'Erro ao atualizar tarefa.');
+      await fetchTasks();
+      setEditingTask(null);
+    } catch (err) {
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError('Erro ao atualizar tarefa.');
+      }
     }
   };
 
@@ -57,14 +69,18 @@ const TasksPage: React.FC = () => {
     if (window.confirm('Tem certeza que deseja excluir esta tarefa?')) {
       try {
         await deleteTask(id);
-        await fetchTasks(); // Recarrega a lista
-      } catch (err: any) {
-        setError(err.message || 'Erro ao excluir tarefa.');
+        await fetchTasks();
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError('Erro ao excluir tarefa.');
+        }
       }
     }
   };
 
-  const startEditing = (task: any) => {
+  const startEditing = (task: TaskData) => {
     setEditingTask(task);
   };
 
@@ -80,7 +96,7 @@ const TasksPage: React.FC = () => {
       <h2 style={{ textAlign: 'center', marginBottom: '25px', color: '#333' }}>Minhas Tarefas</h2>
 
       <TaskForm
-        initialData={editingTask}
+        initialData={editingTask ?? undefined}
         onSubmit={editingTask ? (data) => handleUpdateTask(editingTask.taskId, data) : handleCreateTask}
         onCancel={editingTask ? cancelEditing : undefined}
       />

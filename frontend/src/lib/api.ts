@@ -1,5 +1,6 @@
 // src/lib/api.ts
 import { getToken, removeToken } from './auth';
+import { TaskData } from '../types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL;
 
@@ -37,27 +38,26 @@ async function fetcher<T>(url: string, options: ApiOptions = {}): Promise<T> {
   return response.json();
 }
 
-
-// Funções de API
-export const login = async (credentials: any): Promise<{ access_token: string }> => {
+// Funções de API com tipagem
+export const login = async (credentials: { email: string; senha: string }): Promise<{ access_token: string }> => {
   return fetcher('/auth/login', {
     method: 'POST',
     body: JSON.stringify(credentials),
   });
 };
 
-export const getTasks = async (): Promise<any[]> => {
+export const getTasks = async (): Promise<TaskData[]> => {
   return fetcher('/tarefas', { method: 'GET' });
 };
 
-export const createTask = async (taskData: any): Promise<any> => {
+export const createTask = async (taskData: TaskData): Promise<TaskData> => {
   return fetcher('/tarefas', {
     method: 'POST',
     body: JSON.stringify(taskData),
   });
 };
 
-export const updateTask = async (id: number, taskData: any): Promise<any> => {
+export const updateTask = async (id: number, taskData: TaskData): Promise<TaskData> => {
   return fetcher(`/tarefas/${id}`, {
     method: 'PATCH',
     body: JSON.stringify(taskData),

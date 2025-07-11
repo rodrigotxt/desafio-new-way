@@ -1,9 +1,15 @@
 // src/components/TaskForm.tsx
 import React, { useState, useEffect } from 'react';
 
+interface TaskData {
+  nome: string;
+  descricao: string;
+  concluido: boolean;
+}
+
 interface TaskFormProps {
-  initialData?: any; // Para edição
-  onSubmit: (data: any) => void;
+  initialData?: TaskData;
+  onSubmit: (data: TaskData) => void;
   onCancel?: () => void;
 }
 
