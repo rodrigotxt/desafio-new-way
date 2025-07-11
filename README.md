@@ -137,6 +137,7 @@ Para testar endpoints protegidos:
 ## ⌨️ Comandos Úteis do Makefile
 
 Para facilitar o gerenciamento dos serviços Docker:
+_(os comandos abaixo funcionam para ambiente Linux, windows requer configuração adicional ou uso de WSL)_
 
 * **`make up`**: Constrói as imagens (se necessário) e inicia todos os serviços em modo *detached* (segundo plano).
 * **`make build`**: Apenas constrói as imagens Docker dos serviços.
