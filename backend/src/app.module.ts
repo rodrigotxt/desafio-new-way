@@ -11,11 +11,12 @@ import { SeedModule } from './seed/seed.module';
 
 @Module({
   imports: [
+    SeedModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
     TypeOrmModule.forRootAsync({
-      imports: [ConfigModule, SeedModule],
+      imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (configService: ConfigService) => ({
         type: configService.get<string>('DB_TYPE') as any || 'postgres',
