@@ -6,6 +6,9 @@ Este projeto é uma aplicação completa de gerenciamento de tarefas, desenvolvi
 
 - Clone o repositório
 - Entre na pasta e faça `make up`
+- Backend (Api/Swagger) `localhost:3000/api`
+- Frontend (Next) `localhost:3001`
+- Fazer seed no banco para criar usuário padrão `localhost:3000/seed`ou via swagger.
 - Mais detalhes podem ser vistos nas seção **Como Subir o Projeto**
 
 ## 🚀 Funcionalidades
