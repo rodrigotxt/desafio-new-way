@@ -197,6 +197,17 @@ resource "aws_lb_listener" "http" {
     target_group_arn = aws_lb_target_group.frontend.arn # Roteia todo o tráfego para o frontend
   }
 }
+resource "aws_lb_listener" "https" {
+  load_balancer_arn = aws_lb.main.arn
+  port              = 443
+  protocol          = "HTTPS"
+  certificate_arn   = "arn:aws:acm:us-east-1:194722440064:certificate/37835fd6-bb7b-41ea-9571-6dce6cdf62a0"
+
+  default_action {
+    type             = "forward"
+    target_group_arn = aws_lb_target_group.frontend.arn
+  }
+}
 /*
 # Opcional: Listener para o backend se quiser expor a API diretamente
 resource "aws_lb_listener_rule" "backend_rule" {
@@ -300,7 +311,7 @@ resource "aws_ecs_task_definition" "frontend" {
       environment = [
         {
           name  = "NEXT_PUBLIC_API_BASE_URL"
-          value = "http://${aws_lb.main.dns_name}:3000" # Ajustar se o backend for exposto de forma diferente
+          value = "http://${aws_ecs_service.backend.name}:3000"
         },
         {
           name  = "NODE_ENV"
