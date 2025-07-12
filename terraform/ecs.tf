@@ -314,6 +314,10 @@ resource "aws_ecs_task_definition" "frontend" {
           value = "http://${aws_ecs_service.backend.name}:3000"
         },
         {
+          name  = "API_BASE_URL"
+          value = "http://${aws_ecs_service.backend.name}:3000"
+        },
+        {
           name  = "NODE_ENV"
           value = "production"
         },
